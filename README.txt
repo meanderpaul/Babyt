@@ -1,5 +1,7 @@
-Comprehensive Vulnerability Testing (CUT)
+[Comprehensive Vulnerability Testing (CUT)]
+
 Overview
+
 CUT (Comprehensive Vulnerability Testing) is an advanced tool designed to identify and escalate various security vulnerabilities in an application. It combines detection and exploitation techniques to provide a thorough security assessment.
 
 Features
@@ -61,7 +63,9 @@ Example Input File
 https://example.com/search,query,XSS
 https://example.com/login,username,SQL Injection
 https://example.com/profile,user_id,IDOR
+
 Output
+
 The program logs all actions and results to a file named combined_vulnerability_report.log.
 
 Example Output
@@ -74,7 +78,8 @@ log
 2025-01-02 07:38:14 - Response Status Code: 200
 ...
 2025-01-02 07:38:20 - Report saved to /path/to/output/combined_vulnerability_report.log
-Contributing
+
+[Contributing]
 If you would like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
 License
