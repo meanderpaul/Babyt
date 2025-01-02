@@ -32,26 +32,26 @@ CUT (Comprehensive Vulnerability Testing) is an advanced tool designed to identi
 
 To install the required dependencies, run:
 
-\\'bash
+```bash
 pip install requests
-\\'
+```
 
 ## **Usage**
 
 1. **Prepare an Input File**: Create a text file with detected vulnerabilities. Each line should follow the format: `endpoint,param,vuln_type`.
 2. **Run the Program**: Execute the script with the file path to the input file.
 
-\`\`\`bash
+```bash
 python cut.py
-\`\`\`
+```
 
 ## **Example Input File**
 
-\`\`\`
+```
 https://example.com/search,query,XSS
 https://example.com/login,username,SQL Injection
 https://example.com/profile,user_id,IDOR
-\`\`\`
+```
 
 ## **Output**
 
@@ -59,7 +59,7 @@ The program logs all actions and results to a file named `combined_vulnerability
 
 ## **Example Output**
 
-\`\`\`log
+```log
 2025-01-02 07:38:12 - Loaded 3 vulnerabilities
 2025-01-02 07:38:12 - Escalating XSS vulnerability at https://example.com/search with parameter query
 2025-01-02 07:38:13 - Testing XSS with payload: <script>alert('XSS')</script>
@@ -68,7 +68,7 @@ The program logs all actions and results to a file named `combined_vulnerability
 2025-01-02 07:38:14 - Response Status Code: 200
 ...
 2025-01-02 07:38:20 - Report saved to /path/to/output/combined_vulnerability_report.log
-\`\`\`
+```
 
 ## **Contributing**
 
