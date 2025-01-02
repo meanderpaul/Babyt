@@ -32,9 +32,9 @@ CUT (Comprehensive Vulnerability Testing) is an advanced tool designed to identi
 
 To install the required dependencies, run:
 
-\\\'bash
+\\'bash
 pip install requests
-\\\'
+\\'
 
 ## **Usage**
 
