@@ -82,3 +82,81 @@ This project is licensed under the MIT License.
 
 - Ensure you have authorization to test the application for vulnerabilities.
 - This program is designed for educational and ethical purposes only.
+
+  # **Vulnerability Detection Program**
+
+## **Overview**
+
+This program scans for potential vulnerabilities in a given application by analyzing specified endpoints and parameters. It identifies common vulnerabilities such as SQL injection, Cross-Site Scripting (XSS), and Insecure Direct Object References (IDOR).
+
+## **Features**
+
+- **SQL Injection Detection**: Identifies possible SQL injection points.
+- **Cross-Site Scripting (XSS) Detection**: Detects potential XSS vulnerabilities.
+- **Insecure Direct Object References (IDOR) Detection**: Finds IDOR vulnerabilities.
+- **Logging**: Logs all detected vulnerabilities for further analysis.
+
+## **Installation**
+
+To install the required dependencies, run:
+
+```bash
+pip install requests
+```
+
+## **Usage**
+
+1. **Input File**: Prepare a text file with endpoints and parameters to test.
+2. **Run the Program**: Execute the script with the file path to the input file.
+   ```bash
+   python vulnerability_detection.py
+   ```
+
+## **Example Input File**
+
+```text
+https://example.com/search,query,XSS
+https://example.com/login,username,SQL Injection
+```
+
+## **Output**
+
+The program logs detected vulnerabilities to a file named `vulnerability_detection.log`.
+
+## **Example Output**
+
+```log
+2025-01-02 07:38:12 - Loaded 2 vulnerabilities
+2025-01-02 07:38:12 - Testing SQL Injection vulnerability at https://example.com/login with parameter username
+2025-01-02 07:38:13 - Potential SQL Injection vulnerability detected with parameter 'username'
+2025-01-02 07:38:14 - Testing XSS vulnerability at https://example.com/search with parameter query
+2025-01-02 07:38:15 - Potential XSS vulnerability detected with parameter 'query'
+...
+2025-01-02 07:38:20 - Report saved to /path/to/output/vulnerability_detection.log
+```
+
+## **Dependencies**
+
+- Python 3.x
+- `requests` library
+
+## **Installation**
+
+```bash
+pip install requests
+```
+
+## **Contributing**
+
+If you would like to contribute to this project, please fork the repository and submit a pull request with your changes.
+
+## **License**
+
+This project is licensed under the MIT License.
+
+## **Notes**
+
+- Ensure you have authorization to test the application for vulnerabilities.
+- This program is designed for educational and ethical purposes only.
+
+
