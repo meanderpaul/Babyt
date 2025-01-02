@@ -84,7 +84,7 @@ This project is licensed under the MIT License.
 - This program is designed for educational and ethical purposes only.
 
 
-# **Vulnerability Detection Program**
+# **Vulnerability Detection(vd.py)**
 
 ## **Overview**
 
@@ -161,7 +161,7 @@ This project is licensed under the MIT License.
 - This program is designed for educational and ethical purposes only.
 
 
-# **Vulnerability Escalation Program**
+# **Vulnerability Escalation(ve.py)**
 
 ## **Overview**
 
