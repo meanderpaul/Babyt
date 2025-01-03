@@ -1,49 +1,43 @@
 import os
 
-def log_step(step_description):
-    with open('vulnerability_reports/vd_report.txt', 'a') as report_file:
-        report_file.write(f"{step_description}\n")
+def get_valid_file_path(prompt):
+    while True:
+        file_path = input(prompt).strip()
+        if os.path.exists(file_path):
+            print("File loaded and accepted.")
+            return file_path
+        elif os.path.exists(f"{file_path}.txt"):
+            file_path = f"{file_path}.txt"
+            print("File loaded and accepted.")
+            return file_path
+        else:
+            print("File not found. Please enter the file path again.")
 
-def run_task(task_script):
-    # Ensure the script exists before trying to run it
-    if os.path.exists(task_script):
-        os.system(f'python {task_script}')
-        log_step(f"Ran additional task: {task_script}")
-    else:
-        log_step(f"Task script {task_script} not found.")
+def analyze_vulnerabilities(url_file_path, output_path):
+    # Load URLs from file
+    with open(url_file_path, 'r') as file:
+        urls = [line.strip() for line in file if line.strip()]
 
-def copy_content(input_file, output_file):
-    # Placeholder task - Just copying content from input to output
-    with open(input_file, 'r') as infile:
-        content = infile.read()
-    
-    with open(output_file, 'w') as outfile:
-        outfile.write(content)
-    
-    log_step(f"Copied content from {input_file} to {output_file}")
+    # Example vulnerability analysis logic
+    vulnerabilities = []
+    for url in urls:
+        # Vulnerability analysis logic here, placeholder example
+        vulnerabilities.append(f"Vulnerability found for URL: {url}")
 
-def main(input_file, output_file, additional_tasks):
-    # Copy content as the initial task
-    copy_content(input_file, output_file)
+    # Save analysis results
+    with open(output_path, 'w') as output_file:
+        output_file.write('\n'.join(vulnerabilities))
     
-    # Run additional tasks
+    print(f"Vulnerability analysis results saved to {output_path}")
+
+def main(url_file_path, output_path, additional_tasks):
+    print("Running vulnerability detection...")
+    analyze_vulnerabilities(url_file_path, output_path)
     for task_script in additional_tasks:
-        run_task(task_script)
-    
-    print("vd.py tasks completed.")
+        exec(open(task_script).read())
+    print("Vulnerability Detection Completed.")
 
 if __name__ == '__main__':
-    # This part is only for standalone testing
-    input_file = input("Enter the path to the input file: ")
-    output_file = input("Enter the path to the output file: ")
-    additional_tasks = []
-
-    while True:
-        run_more_tasks = input("Do you want to run additional tasks? (yes/no): ").strip().lower()
-        if run_more_tasks == 'yes':
-            task_script = input("Enter the path to the Python script for the additional task: ")
-            additional_tasks.append(task_script)
-        else:
-            break
-
-    main(input_file, output_file, additional_tasks)
+    url_file_path = get_valid_file_path("Enter the path to the URL scanner output file: ")
+    output_path = input("Enter the path to the output file for vulnerability analysis: ").strip()
+    main(url_file_path, output_path, [])
